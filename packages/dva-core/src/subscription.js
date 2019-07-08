@@ -36,6 +36,7 @@ export function unlisten(unlisteners, namespace) {
     )}`,
   );
   for (const unlistener of funcs) {
+    // cxi: 真的是执行 unlisten 噢
     unlistener();
   }
   delete unlisteners[namespace];

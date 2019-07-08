@@ -19,6 +19,27 @@ export default function({
     `[app.start] extraEnhancers should be array, but got ${typeof extraEnhancers}`,
   );
 
+  // createStore 劫持了 redux 本身的 createStore，sagaMiddleware 和 promiseMiddleware 是写死在入参 。。。
+  // 。。 里的。routerMiddleware 是通过 createOpts.setupMiddlewares 传进来的。调用链路是这样的：
+
+  // - 外界 app.dva()，执行  dva/src/index.js#const app = create(opts, createOpts);
+  // - createOpts 里面已经有 routerMiddleware，在 dva/src/index.js
+  // - createOpts 被冻结在 dva-core/src/index.js# export function create(hooksAndOpts = {}, createOpts = {}) {
+  // - 当 app.start() 时候 dva-core/src/index.js# 如下
+  /**
+   *
+    // Create store
+    app._store = createStore({
+      reducers: createReducer(),
+      initialState: hooksAndOpts.initialState || {},
+      plugin,
+      createOpts,
+      sagaMiddleware,
+      promiseMiddleware,
+    });
+   */
+  // - 此时 sagaMiddleware 和 promiseMiddleware 在 dva-core/src/index.js 里面传入
+
   const extraMiddlewares = plugin.get('onAction');
   const middlewares = setupMiddlewares([
     promiseMiddleware,

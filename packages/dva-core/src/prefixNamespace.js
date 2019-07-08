@@ -2,6 +2,8 @@ import warning from 'warning';
 import { isArray } from './utils';
 import { NAMESPACE_SEP } from './constants';
 
+/* obj: 用户定义的 reducers object 或 effects object， 也可以是那个 Internal model 中的 reducers */
+/** type: 'reducer' | 'effect' */
 function prefix(obj, namespace, type) {
   return Object.keys(obj).reduce((memo, key) => {
     warning(
