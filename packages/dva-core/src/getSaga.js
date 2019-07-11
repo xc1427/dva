@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 import warning from 'warning';
-import { effects as sagaEffects } from 'redux-saga';
+import * as sagaEffects from 'redux-saga/effects';
 import { NAMESPACE_SEP } from './constants';
 import prefixType from './prefixType';
 
@@ -30,8 +30,8 @@ function getWatcher(key, _effect, model, onError, onEffect, opts) {
     const opts = _effect[1];
     if (opts && opts.type) {
       ({ type } = opts);
-      if (type === 'throttle') {
-        invariant(opts.ms, 'app.start: opts.ms should be defined if type is throttle');
+      if (type === 'throttle' || type === 'debounce') {
+        invariant(opts.ms, 'app.start: opts.ms should be defined if type is throttle or debounce');
         ({ ms } = opts);
       }
       if (type === 'poll') {
@@ -97,6 +97,10 @@ function getWatcher(key, _effect, model, onError, onEffect, opts) {
           yield race([call(pollSagaWorker, sagaEffects, action), take(`${key}-stop`)]);
         }
       };
+    case 'debounce':
+      return function*() {
+        yield sagaEffects.debounce(ms, key, sagaWithOnEffect);
+      };
     default:
       return function*() {
         yield sagaEffects.takeEvery(key, sagaWithOnEffect);
@@ -119,6 +123,8 @@ function createEffects(model, opts) {
   }
   function put(action) {
     const { type } = action;
+    console.log('debug cxi', 'in function put 2');
+
     assertAction(type, 'sagaEffects.put');
     return sagaEffects.put({ ...action, type: prefixType(type, model) });
   }
@@ -143,6 +149,7 @@ function createEffects(model, opts) {
       assertAction(type, 'sagaEffects.take');
       return sagaEffects.take(prefixType(type, model));
     } else if (Array.isArray(type)) {
+      dva;
       return sagaEffects.take(
         type.map(t => {
           if (typeof t === 'string') {
@@ -156,7 +163,13 @@ function createEffects(model, opts) {
       return sagaEffects.take(type);
     }
   }
-  return { ...sagaEffects, put, take };
+
+  function setState(payload) {
+    return sagaEffects.put({ type: `${model.namespace}/setState`, payload });
+  }
+
+  console.log('debug cxi', 'sagaEffects in function take (as wrapper)', sagaEffects);
+  return { ...sagaEffects, put, take, setState };
 }
 
 function applyOnEffect(fns, effect, model, key) {

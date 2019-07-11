@@ -51,24 +51,24 @@ export type Subscription = (api: SubscriptionAPI, done: Function) => void;
 export type ReducersMapObjectWithEnhancer = [ReducersMapObject, ReducerEnhancer];
 
 export interface EffectsMapObject {
-  [key: string]: Effect | EffectWithType,
+  [key: string]: Effect | EffectWithType;
 }
 
 export interface SubscriptionAPI {
-  history: History,
-  dispatch: Dispatch<any>,
+  history: History;
+  dispatch: Dispatch<any>;
 }
 
 export interface SubscriptionsMapObject {
-  [key: string]: Subscription,
+  [key: string]: Subscription;
 }
 
 export interface Model {
-  namespace: string,
-  state?: any,
-  reducers?: ReducersMapObject | ReducersMapObjectWithEnhancer,
-  effects?: EffectsMapObject,
-  subscriptions?: SubscriptionsMapObject,
+  namespace: string;
+  state?: any;
+  reducers?: ReducersMapObject | ReducersMapObjectWithEnhancer;
+  effects?: EffectsMapObject;
+  subscriptions?: SubscriptionsMapObject;
 }
 
 export interface RouterAPI {

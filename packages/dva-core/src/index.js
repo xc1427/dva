@@ -72,7 +72,12 @@ export function create(hooksAndOpts = {}, createOpts = {}) {
     m = model(m);
 
     const store = app._store;
-    store.asyncReducers[m.namespace] = getReducer(m.reducers, m.state, plugin._handleActions);
+    store.asyncReducers[m.namespace] = getReducer(
+      m.reducers,
+      m.state,
+      plugin._handleActions,
+      m.namespace,
+    );
     store.replaceReducer(createReducer());
     if (m.effects) {
       store.runSaga(app._getSaga(m.effects, m, onError, plugin.get('onEffect'), hooksAndOpts));
@@ -176,7 +181,7 @@ export function create(hooksAndOpts = {}, createOpts = {}) {
     const sagas = [];
     const reducers = { ...initialReducer };
     for (const m of app._models) {
-      reducers[m.namespace] = getReducer(m.reducers, m.state, plugin._handleActions);
+      reducers[m.namespace] = getReducer(m.reducers, m.state, plugin._handleActions, m.namespace);
       if (m.effects) {
         sagas.push(app._getSaga(m.effects, m, onError, plugin.get('onEffect'), hooksAndOpts));
       }

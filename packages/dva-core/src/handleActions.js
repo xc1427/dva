@@ -19,9 +19,19 @@ function reduceReducers(...reducers) {
   return (previous, current) => reducers.reduce((p, r) => r(p, current), previous);
 }
 
-function handleActions(handlers, defaultState) {
-  const reducers = Object.keys(handlers).map(type => handleAction(type, handlers[type]));
+function handleActions(handlers, defaultState, namespace) {
+  console.log('debug cxi', 'handleActions::handlers', handlers);
+  const morehandler = {
+    [`${namespace}/setState`]: (state = defaultState, action) => {
+      const { payload } = action;
+      return { ...state, ...payload };
+    },
+    ...handlers,
+  };
+  const reducers = Object.keys(morehandler).map(type => handleAction(type, morehandler[type]));
+  console.log('debug cxi', 'handleActions::morehandler', morehandler);
   const reducer = reduceReducers(...reducers);
+  console.log('debug cxi', 'handleActions::reducer', reducer);
   return (state = defaultState, action) => reducer(state, action);
 }
 

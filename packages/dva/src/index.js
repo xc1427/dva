@@ -49,6 +49,9 @@ export default function(opts = {}) {
   }
 
   function start(container) {
+    console.log('debug cxi', 'dva/src/index.js::Provider', Provider);
+    console.log('debug cxi', 'in dva::start::container', container);
+
     // 允许 container 是字符串，然后用 querySelector 找元素
     if (isString(container)) {
       container = document.querySelector(container);
@@ -92,9 +95,12 @@ function isString(str) {
 }
 
 function getProvider(store, app, router) {
-  const DvaRoot = extraProps => (
-    <Provider store={store}>{router({ app, history: app._history, ...extraProps })}</Provider>
-  );
+  const DvaRoot = extraProps => {
+    console.log('debug cxi', 'getProvider::DvaRoot::extraProps', extraProps);
+    return (
+      <Provider store={store}>{router({ app, history: app._history, ...extraProps })}</Provider>
+    );
+  };
   return DvaRoot;
 }
 

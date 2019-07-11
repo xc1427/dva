@@ -58,5 +58,9 @@
     "saga.js",
     "warnAboutDeprecatedCJSRequire.js",
     "*.d.ts"
-  ]
+  ],
+  "devDependencies": {
+    "redux-saga": "^1.0.5",
+    "typescript-fsa": "^3.0.0-beta-2"
+  }
 }
